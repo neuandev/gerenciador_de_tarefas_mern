@@ -48,7 +48,47 @@ const getTasks = async (req, res) => {
   }
 };
 
+const updateTask = async (req, res) => {
+  try {
+    const { title, description, status } = req.body;
+
+    const task = await Task.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.userId,
+      },
+      {
+        title,
+        description,
+        status,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Tarefa não encontrada.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tarefa atualizada com sucesso!",
+      task,
+    });
+  } catch (error) {
+    console.error("Erro ao atualizar tarefa:", error);
+
+    return res.status(500).json({
+      message: "Erro interno do servidor.",
+    });
+  }
+};
+
 module.exports = {
   createTask,
   getTasks,
+  updateTask,
 };
