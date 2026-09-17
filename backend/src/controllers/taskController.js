@@ -87,8 +87,34 @@ const updateTask = async (req, res) => {
   }
 };
 
+const deleteTask = async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      user: req.userId,
+    });
+
+    if (!task) {
+      return res.status(404).json({
+        message: "Tarefa não encontrada.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tarefa excluída com sucesso!",
+    });
+  } catch (error) {
+    console.error("Erro ao excluir tarefa:", error);
+
+    return res.status(500).json({
+      message: "Erro interno do servidor.",
+    });
+  }
+};
+
 module.exports = {
   createTask,
   getTasks,
   updateTask,
+  deleteTask,
 };
