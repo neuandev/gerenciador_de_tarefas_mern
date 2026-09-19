@@ -1,4 +1,4 @@
-# Projeto_MERN_SGTA#
+# Projeto_MERN_SGTA
 
 Sistema web de gerenciamento de tarefas desenvolvido com a stack MERN, utilizando autenticação de usuários com JWT e banco de dados MongoDB.
 
