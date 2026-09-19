@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -122,9 +124,17 @@ function Dashboard() {
     }
   };
 
+  // Logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <div>
       <h1>Dashboard</h1>
+
+      <button onClick={handleLogout}>Sair</button>
 
       <p>Gerenciador de tarefas</p>
 
