@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -39,46 +40,52 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="login-page">
+      <div className="login-card">
+        <h1>Login</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">E-mail</label>
+        <p className="login-subtitle">
+          Entre para acessar seu gerenciador de tarefas
+        </p>
 
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="Digite seu e-mail"
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="login-form-group">
+            <label htmlFor="email">E-mail</label>
 
-        <div>
-          <label htmlFor="password">Senha</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Digite seu e-mail"
+              required
+            />
+          </div>
 
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Digite sua senha"
-            required
-          />
-        </div>
+          <div className="login-form-group">
+            <label htmlFor="password">Senha</label>
 
-        {error && <p>{error}</p>}
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Digite sua senha"
+              required
+            />
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Entrando..." : "Entrar"}
-        </button>
-      </form>
+          {error && <p className="login-error">{error}</p>}
 
-      <p>
-        Ainda não possui uma conta? <Link to="/cadastro">Cadastre-se</Link>
-      </p>
+          <button className="login-button" type="submit" disabled={loading}>
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+
+        <p className="login-cadastro">
+          Ainda não possui uma conta? <Link to="/cadastro">Cadastre-se</Link>
+        </p>
+      </div>
     </div>
   );
 }

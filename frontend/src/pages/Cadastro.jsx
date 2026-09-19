@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import "./Cadastro.css";
 
 function Cadastro() {
   const navigate = useNavigate();
@@ -51,74 +52,80 @@ function Cadastro() {
   };
 
   return (
-    <div>
-      <h1>Cadastro</h1>
+    <div className="cadastro-page">
+      <div className="cadastro-card">
+        <h1>Cadastro</h1>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Nome</label>
+        <p className="cadastro-subtitle">
+          Crie sua conta para gerenciar suas tarefas
+        </p>
 
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Digite seu nome"
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="cadastro-form-group">
+            <label htmlFor="name">Nome</label>
 
-        <div>
-          <label htmlFor="email">E-mail</label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Digite seu nome"
+              required
+            />
+          </div>
 
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="Digite seu e-mail"
-            required
-          />
-        </div>
+          <div className="cadastro-form-group">
+            <label htmlFor="email">E-mail</label>
 
-        <div>
-          <label htmlFor="password">Senha</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Digite seu e-mail"
+              required
+            />
+          </div>
 
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Digite sua senha"
-            required
-          />
-        </div>
+          <div className="cadastro-form-group">
+            <label htmlFor="password">Senha</label>
 
-        <div>
-          <label htmlFor="confirmPassword">Confirmar senha</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Digite sua senha"
+              required
+            />
+          </div>
 
-          <input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            placeholder="Confirme sua senha"
-            required
-          />
-        </div>
+          <div className="cadastro-form-group">
+            <label htmlFor="confirmPassword">Confirmar senha</label>
 
-        {error && <p>{error}</p>}
+            <input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              placeholder="Confirme sua senha"
+              required
+            />
+          </div>
 
-        {success && <p>{success}</p>}
+          {error && <p className="cadastro-error">{error}</p>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Cadastrando..." : "Cadastrar"}
-        </button>
-      </form>
+          {success && <p className="cadastro-success">{success}</p>}
 
-      <p>
-        Já possui uma conta? <Link to="/login">Entrar</Link>
-      </p>
+          <button className="cadastro-button" type="submit" disabled={loading}>
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </button>
+        </form>
+
+        <p className="cadastro-login">
+          Já possui uma conta? <Link to="/login">Entrar</Link>
+        </p>
+      </div>
     </div>
   );
 }

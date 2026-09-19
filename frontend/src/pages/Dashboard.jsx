@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -58,7 +59,7 @@ function Dashboard() {
         await api.post("/tasks", {
           title,
           description,
-          status: "pendente",
+          status,
         });
 
         setSuccess("Tarefa criada com sucesso!");
@@ -124,105 +125,121 @@ function Dashboard() {
     }
   };
 
-  // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p>Gerenciador de tarefas</p>
+        </div>
 
-      <button onClick={handleLogout}>Sair</button>
-
-      <p>Gerenciador de tarefas</p>
+        <button className="logout-button" onClick={handleLogout}>
+          Sair
+        </button>
+      </div>
 
       <hr />
 
-      <h2>{editingTask ? "Editar tarefa" : "Nova tarefa"}</h2>
+      <section className="task-form">
+        <h2>{editingTask ? "Editar tarefa" : "Nova tarefa"}</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">Título</label>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="title">Título</label>
 
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="Digite o título da tarefa"
-          />
-        </div>
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="Digite o título da tarefa"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="description">Descrição</label>
+          <div>
+            <label htmlFor="description">Descrição</label>
 
-          <textarea
-            id="description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            placeholder="Digite a descrição da tarefa"
-          />
-        </div>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Digite a descrição da tarefa"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="status">Status</label>
+          <div>
+            <label htmlFor="status">Status</label>
 
-          <select
-            id="status"
-            value={status}
-            onChange={(event) => setStatus(event.target.value)}
-          >
-            <option value="pendente">Pendente</option>
-            <option value="concluída">Concluída</option>
-          </select>
-        </div>
+            <select
+              id="status"
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+            >
+              <option value="pendente">Pendente</option>
+              <option value="concluída">Concluída</option>
+            </select>
+          </div>
 
-        <button type="submit" disabled={loading}>
-          {loading
-            ? "Salvando..."
-            : editingTask
-              ? "Salvar alterações"
-              : "Criar tarefa"}
-        </button>
-
-        {editingTask && (
-          <button type="button" onClick={handleCancelEdit}>
-            Cancelar
+          <button type="submit" disabled={loading}>
+            {loading
+              ? "Salvando..."
+              : editingTask
+                ? "Salvar alterações"
+                : "Criar tarefa"}
           </button>
-        )}
-      </form>
+
+          {editingTask && (
+            <button type="button" onClick={handleCancelEdit}>
+              Cancelar
+            </button>
+          )}
+        </form>
+      </section>
 
       {error && <p>{error}</p>}
 
       {success && <p>{success}</p>}
 
-      <hr />
+      <section>
+        <h2>Minhas tarefas</h2>
 
-      <h2>Minhas tarefas</h2>
+        {tasks.length === 0 ? (
+          <p>Nenhuma tarefa encontrada.</p>
+        ) : (
+          <ul className="tasks-list">
+            {tasks.map((task) => (
+              <li className="task-item" key={task._id}>
+                <h3>{task.title}</h3>
 
-      {tasks.length === 0 ? (
-        <p>Nenhuma tarefa encontrada.</p>
-      ) : (
-        <ul>
-          {tasks.map((task) => (
-            <li key={task._id}>
-              <strong>{task.title}</strong>
+                {task.description && <p>{task.description}</p>}
 
-              {task.description && <p>{task.description}</p>}
+                <span>Status: {task.status}</span>
 
-              <span>Status: {task.status}</span>
+                <div className="task-actions">
+                  <button
+                    className="edit-button"
+                    onClick={() => handleEdit(task)}
+                  >
+                    Editar
+                  </button>
 
-              <br />
-
-              <button onClick={() => handleEdit(task)}>Editar</button>
-
-              <button onClick={() => handleDelete(task._id)}>Excluir</button>
-            </li>
-          ))}
-        </ul>
-      )}
+                  <button
+                    className="delete-button"
+                    onClick={() => handleDelete(task._id)}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
