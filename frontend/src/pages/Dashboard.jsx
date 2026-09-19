@@ -61,7 +61,30 @@ function Dashboard() {
       setLoading(false);
     }
   };
+  const handleDelete = async (id) => {
+    const confirmar = window.confirm(
+      "Tem certeza que deseja excluir esta tarefa?",
+    );
 
+    if (!confirmar) {
+      return;
+    }
+
+    setError("");
+    setSuccess("");
+
+    try {
+      await api.delete(`/tasks/${id}`);
+
+      setSuccess("Tarefa excluída com sucesso!");
+
+      await carregarTarefas();
+    } catch (error) {
+      console.error("Erro ao excluir tarefa:", error);
+
+      setError(error.response?.data?.message || "Erro ao excluir a tarefa.");
+    }
+  };
   return (
     <div>
       <h1>Dashboard</h1>
@@ -120,6 +143,8 @@ function Dashboard() {
               {task.description && <p>{task.description}</p>}
 
               <span>Status: {task.status}</span>
+
+              <button onClick={() => handleDelete(task._id)}>Excluir</button>
             </li>
           ))}
         </ul>
