@@ -25,6 +25,12 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/api", (req, res) => {
+  res.json({
+    message: "API do Gerenciador de Tarefas funcionando!",
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 
 mongoose
