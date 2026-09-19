@@ -6,6 +6,9 @@ function Dashboard() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [status, setStatus] = useState("pendente");
+
+  const [editingTask, setEditingTask] = useState(null);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -41,26 +44,59 @@ function Dashboard() {
     setLoading(true);
 
     try {
-      await api.post("/tasks", {
-        title,
-        description,
-        status: "pendente",
-      });
+      if (editingTask) {
+        await api.put(`/tasks/${editingTask._id}`, {
+          title,
+          description,
+          status,
+        });
+
+        setSuccess("Tarefa atualizada com sucesso!");
+      } else {
+        await api.post("/tasks", {
+          title,
+          description,
+          status: "pendente",
+        });
+
+        setSuccess("Tarefa criada com sucesso!");
+      }
 
       setTitle("");
       setDescription("");
-
-      setSuccess("Tarefa criada com sucesso!");
+      setStatus("pendente");
+      setEditingTask(null);
 
       await carregarTarefas();
     } catch (error) {
-      console.error("Erro ao criar tarefa:", error);
+      console.error("Erro ao salvar tarefa:", error);
 
-      setError(error.response?.data?.message || "Erro ao criar a tarefa.");
+      setError(error.response?.data?.message || "Erro ao salvar a tarefa.");
     } finally {
       setLoading(false);
     }
   };
+
+  const handleEdit = (task) => {
+    setEditingTask(task);
+    setTitle(task.title);
+    setDescription(task.description || "");
+    setStatus(task.status);
+
+    setError("");
+    setSuccess("");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+    setTitle("");
+    setDescription("");
+    setStatus("pendente");
+
+    setError("");
+    setSuccess("");
+  };
+
   const handleDelete = async (id) => {
     const confirmar = window.confirm(
       "Tem certeza que deseja excluir esta tarefa?",
@@ -85,6 +121,7 @@ function Dashboard() {
       setError(error.response?.data?.message || "Erro ao excluir a tarefa.");
     }
   };
+
   return (
     <div>
       <h1>Dashboard</h1>
@@ -93,7 +130,7 @@ function Dashboard() {
 
       <hr />
 
-      <h2>Nova tarefa</h2>
+      <h2>{editingTask ? "Editar tarefa" : "Nova tarefa"}</h2>
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -119,9 +156,32 @@ function Dashboard() {
           />
         </div>
 
+        <div>
+          <label htmlFor="status">Status</label>
+
+          <select
+            id="status"
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          >
+            <option value="pendente">Pendente</option>
+            <option value="concluída">Concluída</option>
+          </select>
+        </div>
+
         <button type="submit" disabled={loading}>
-          {loading ? "Criando..." : "Criar tarefa"}
+          {loading
+            ? "Salvando..."
+            : editingTask
+              ? "Salvar alterações"
+              : "Criar tarefa"}
         </button>
+
+        {editingTask && (
+          <button type="button" onClick={handleCancelEdit}>
+            Cancelar
+          </button>
+        )}
       </form>
 
       {error && <p>{error}</p>}
@@ -143,6 +203,10 @@ function Dashboard() {
               {task.description && <p>{task.description}</p>}
 
               <span>Status: {task.status}</span>
+
+              <br />
+
+              <button onClick={() => handleEdit(task)}>Editar</button>
 
               <button onClick={() => handleDelete(task._id)}>Excluir</button>
             </li>
