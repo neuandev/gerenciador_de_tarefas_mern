@@ -1,6 +1,6 @@
-const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 const register = async (req, res) => {
   try {
@@ -8,11 +8,36 @@ const register = async (req, res) => {
 
     if (!name || !email || !password) {
       return res.status(400).json({
-        message: "Nome, email e senha são obrigatórios.",
+        message: "Nome, e-mail e senha são obrigatórios.",
       });
     }
 
-    const existingUser = await User.findOne({ email });
+    const nameTrimmed = name.trim();
+    const emailTrimmed = email.trim().toLowerCase();
+
+    if (nameTrimmed.length < 2) {
+      return res.status(400).json({
+        message: "O nome deve ter pelo menos 2 caracteres.",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "A senha deve ter pelo menos 6 caracteres.",
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(emailTrimmed)) {
+      return res.status(400).json({
+        message: "Informe um e-mail válido.",
+      });
+    }
+
+    const existingUser = await User.findOne({
+      email: emailTrimmed,
+    });
 
     if (existingUser) {
       return res.status(400).json({
@@ -23,13 +48,13 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      name,
-      email,
+      name: nameTrimmed,
+      email: emailTrimmed,
       password: hashedPassword,
     });
 
     return res.status(201).json({
-      message: "Usuário cadastrado com sucesso!",
+      message: "Usuário cadastrado com sucesso.",
       user: {
         id: user._id,
         name: user.name,
@@ -51,15 +76,19 @@ const login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        message: "Email e senha são obrigatórios.",
+        message: "E-mail e senha são obrigatórios.",
       });
     }
 
-    const user = await User.findOne({ email });
+    const emailTrimmed = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: emailTrimmed,
+    });
 
     if (!user) {
       return res.status(401).json({
-        message: "Email ou senha inválidos.",
+        message: "E-mail ou senha inválidos.",
       });
     }
 
@@ -67,16 +96,22 @@ const login = async (req, res) => {
 
     if (!passwordMatch) {
       return res.status(401).json({
-        message: "Email ou senha inválidos.",
+        message: "E-mail ou senha inválidos.",
       });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      {
+        userId: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      },
+    );
 
     return res.status(200).json({
-      message: "Login realizado com sucesso!",
+      message: "Login realizado com sucesso.",
       token,
       user: {
         id: user._id,
