@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Task = require("../models/Task");
 
 const createTask = async (req, res) => {
@@ -75,6 +76,12 @@ const updateTask = async (req, res) => {
   try {
     const { title, description, status } = req.body;
 
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        message: "ID da tarefa inválido.",
+      });
+    }
+
     if (!title || typeof title !== "string" || !title.trim()) {
       return res.status(400).json({
         message: "O título da tarefa é obrigatório.",
@@ -137,6 +144,12 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        message: "ID da tarefa inválido.",
+      });
+    }
+
     const task = await Task.findOneAndDelete({
       _id: req.params.id,
       user: req.userId,
