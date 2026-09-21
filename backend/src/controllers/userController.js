@@ -12,6 +12,16 @@ const register = async (req, res) => {
       });
     }
 
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return res.status(400).json({
+        message: "Nome, e-mail e senha devem ser textos.",
+      });
+    }
+
     const nameTrimmed = name.trim();
     const emailTrimmed = email.trim().toLowerCase();
 
@@ -77,6 +87,12 @@ const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         message: "E-mail e senha são obrigatórios.",
+      });
+    }
+
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        message: "E-mail e senha devem ser textos.",
       });
     }
 
