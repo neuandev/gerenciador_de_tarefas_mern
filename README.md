@@ -58,6 +58,7 @@ O sistema possui:
 - GitHub
 - Thunder Client
 - MongoDB Atlas
+- Docker
 
 ---
 
@@ -87,6 +88,7 @@ gerenciador_de_tarefas_mern/
 │   │
 │   ├── .env.example
 │   ├── .gitignore
+│   ├── Dockerfile
 │   ├── package.json
 │   └── package-lock.json
 │
@@ -110,9 +112,12 @@ gerenciador_de_tarefas_mern/
 │   │   ├── index.css
 │   │   └── main.jsx
 │   │
+│   ├── .dockerignore
+│   ├── Dockerfile
 │   ├── package.json
 │   └── package-lock.json
 │
 ├── .gitignore
+├── docker-compose.yml
 └── README.md
 ```
