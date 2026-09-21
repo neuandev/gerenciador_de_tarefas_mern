@@ -27,6 +27,12 @@ const createTask = async (req, res) => {
       });
     }
 
+    if (description && description.trim().length > 1000) {
+      return res.status(400).json({
+        message: "A descrição deve ter no máximo 1000 caracteres.",
+      });
+    }
+
     if (
       status !== undefined &&
       status !== "pendente" &&
@@ -101,6 +107,12 @@ const updateTask = async (req, res) => {
     ) {
       return res.status(400).json({
         message: "A descrição deve ser um texto.",
+      });
+    }
+
+    if (description && description.trim().length > 1000) {
+      return res.status(400).json({
+        message: "A descrição deve ter no máximo 1000 caracteres.",
       });
     }
 
