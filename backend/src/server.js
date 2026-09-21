@@ -46,6 +46,21 @@ app.get("/api", (req, res) => {
   });
 });
 
+// Tratamento de erros
+app.use((error, req, res, next) => {
+  if (error instanceof SyntaxError && error.status === 400 && "body" in error) {
+    return res.status(400).json({
+      message: "JSON inválido.",
+    });
+  }
+
+  console.error("Erro interno:", error);
+
+  return res.status(500).json({
+    message: "Erro interno do servidor.",
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Conexão com o MongoDB
