@@ -157,7 +157,7 @@ Acesse a rota `/atividade-frontend` no endereço indicado pelo Vite.
 
 ### Prompts preparados para a atividade
 
-Os textos abaixo são os prompts de referência preparados para documentar o processo. Eles devem ser utilizados/adaptados nas ferramentas de prototipagem e geração visual e podem ser ajustados conforme o resultado real obtido pela dupla.
+Os textos abaixo são os prompts de referência preparados para documentar o processo conforme foi instruído nas aulas. Eles devem ser utilizados/adaptados nas ferramentas de prototipagem e geração visual e podem ser ajustados conforme o resultado real obtido pela dupla.
 
 **Prompt para Galileo AI**
 
