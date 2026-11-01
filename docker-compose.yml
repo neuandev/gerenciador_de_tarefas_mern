@@ -3,11 +3,12 @@ services:
     image: mongo:6
     container_name: gerenciador-mongo
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - dados:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      test:
+        ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 5s
       timeout: 3s
       retries: 10

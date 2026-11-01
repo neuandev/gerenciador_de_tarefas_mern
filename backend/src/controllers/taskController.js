@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const Task = require("../models/Task");
+const Dashboard = require("../models/Dashboard");
 
 const createTask = async (req, res) => {
   try {
-    const { title, description, status } = req.body;
+    const { title, description, status, dashboardId } = req.body;
 
     if (!title || typeof title !== "string" || !title.trim()) {
       return res.status(400).json({
@@ -43,11 +44,25 @@ const createTask = async (req, res) => {
       });
     }
 
+    let dashboard;
+    if (dashboardId !== undefined) {
+      if (!mongoose.Types.ObjectId.isValid(dashboardId)) {
+        return res.status(400).json({ message: "ID do dashboard inválido." });
+      }
+      dashboard = await Dashboard.findOne({ _id: dashboardId, owner: req.userId, isArchived: false });
+      if (!dashboard) return res.status(404).json({ message: "Dashboard não encontrado." });
+    } else {
+      dashboard = await Dashboard.findOne({ owner: req.userId, name: "Geral", isArchived: false });
+      if (!dashboard) dashboard = await Dashboard.create({ name: "Geral", owner: req.userId, position: 0 });
+    }
+    const lastTask = await Task.findOne({ user: req.userId, dashboard: dashboard._id }).sort({ position: -1 });
     const task = await Task.create({
       title: title.trim(),
       description: description ? description.trim() : "",
       status: status || "pendente",
       user: req.userId,
+      dashboard: dashboard._id,
+      position: lastTask ? lastTask.position + 1 : 0,
     });
 
     return res.status(201).json(task);
@@ -62,9 +77,14 @@ const createTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({
-      user: req.userId,
-    }).sort({ createdAt: -1 });
+    const filter = { user: req.userId };
+    if (req.query.dashboardId !== undefined) {
+      if (!mongoose.Types.ObjectId.isValid(req.query.dashboardId)) {
+        return res.status(400).json({ message: "ID do dashboard inválido." });
+      }
+      filter.dashboard = req.query.dashboardId;
+    }
+    const tasks = await Task.find(filter).sort({ position: 1, createdAt: -1 });
 
     return res.status(200).json({
       tasks,
