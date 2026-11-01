@@ -1,4 +1,17 @@
 services:
+  mongo:
+    image: mongo:6
+    container_name: gerenciador-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - dados:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   backend:
     build: ./backend
     container_name: gerenciador-backend
@@ -6,6 +19,11 @@ services:
       - "3000:3000"
     env_file:
       - ./backend/.env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/trabalho_final
+    depends_on:
+      mongo:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
@@ -14,3 +32,6 @@ services:
       - "5173:80"
     depends_on:
       - backend
+
+volumes:
+  dados:

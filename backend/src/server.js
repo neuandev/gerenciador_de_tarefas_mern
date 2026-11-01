@@ -1,9 +1,9 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
+const connectDatabase = require("./config/database");
 
 dotenv.config();
 
@@ -63,16 +63,18 @@ app.use((error, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Conexão com o MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log("MongoDB conectado com sucesso!");
+// Inicializa a API somente depois de conectar ao MongoDB
+const startServer = async () => {
+  try {
+    await connectDatabase();
 
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
     });
-  })
-  .catch((error) => {
-    console.error("Erro ao conectar ao MongoDB:", error.message);
-  });
+  } catch (error) {
+    console.error("Falha ao conectar ao MongoDB:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
