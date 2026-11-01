@@ -174,6 +174,43 @@ const updateTask = async (req, res) => {
   }
 };
 
+const reorderTasks = async (req, res) => {
+  try {
+    const { dashboardId, taskIds } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(dashboardId)) {
+      return res.status(400).json({ message: "ID do dashboard inválido." });
+    }
+    if (!Array.isArray(taskIds) || taskIds.some((id) => !mongoose.Types.ObjectId.isValid(id))) {
+      return res.status(400).json({ message: "A lista de tarefas é inválida." });
+    }
+    if (new Set(taskIds).size !== taskIds.length) {
+      return res.status(400).json({ message: "A lista contém tarefas duplicadas." });
+    }
+    const dashboard = await Dashboard.findOne({ _id: dashboardId, owner: req.userId, isArchived: false });
+    if (!dashboard) {
+      return res.status(404).json({ message: "Dashboard não encontrado." });
+    }
+    const ownedTasks = await Task.find({
+      user: req.userId, dashboard: dashboardId, _id: { $in: taskIds },
+    }).select("_id");
+    if (ownedTasks.length !== taskIds.length) {
+      return res.status(400).json({ message: "A lista contém tarefas que não pertencem a este dashboard." });
+    }
+    if (taskIds.length) {
+      await Task.bulkWrite(taskIds.map((id, position) => ({
+        updateOne: {
+          filter: { _id: id, user: req.userId, dashboard: dashboardId },
+          update: { $set: { position } },
+        },
+      })));
+    }
+    return res.status(200).json({ message: "Ordem das tarefas atualizada." });
+  } catch (error) {
+    console.error("Erro ao reordenar tarefas:", error);
+    return res.status(500).json({ message: "Não foi possível salvar a ordem das tarefas." });
+  }
+};
+
 const deleteTask = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -209,5 +246,6 @@ module.exports = {
   createTask,
   getTasks,
   updateTask,
+  reorderTasks,
   deleteTask,
 };
