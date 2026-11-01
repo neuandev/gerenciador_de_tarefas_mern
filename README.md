@@ -134,6 +134,16 @@ JWT_SECRET=sua_chave_secreta_com_mais_de_32_caracteres
 
 Não envie o arquivo `.env` ao GitHub. Ele está listado no `.gitignore`.
 
+### 1.1 Alternar entre MongoDB local (Docker) e MongoDB Atlas
+
+O projeto mantém suporte aos dois ambientes sem remover a configuração do Atlas:
+
+- **API executada diretamente no computador com MongoDB Docker:** use `MONGODB_URI=mongodb://localhost:27017/trabalho_final` no arquivo `backend/.env` e inicie o serviço MongoDB com `docker compose up -d mongo`.
+- **API executada diretamente no computador com MongoDB Atlas:** substitua o valor de `MONGODB_URI` pela string de conexão fornecida pelo MongoDB Atlas. Mantenha usuário e senha apenas no arquivo local `.env`, nunca no GitHub.
+- **API executada pelo Docker Compose:** o serviço `backend` recebe automaticamente `MONGODB_URI=mongodb://mongo:27017/trabalho_final`, pois dentro da rede Docker o banco é acessado pelo nome do serviço `mongo`.
+
+Assim, a URI definida no Compose só vale para o contêiner do back-end; ao executar `npm run dev` localmente, a aplicação utiliza a URI configurada no seu `backend/.env`.
+
 ### 2. Iniciar o MongoDB com Docker Compose
 
 Na raiz do repositório, execute:
