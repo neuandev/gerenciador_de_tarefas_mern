@@ -51,7 +51,7 @@ export default function Dashboard() {
 
   const loadDashboards = useCallback(async (preferred) => {
     const res = await api.get("/dashboards");
-    const list = res.data.dashboards || [];
+    const list = Array.isArray(res.data.dashboards) ? res.data.dashboards : [];
     setDashboards(list);
     const id = (preferred && list.some((d) => d._id === preferred) && preferred) || (activeDashboardId && list.some((d) => d._id === activeDashboardId) && activeDashboardId) || list[0]?._id || "";
     setActiveDashboardId(id);
@@ -146,11 +146,27 @@ export default function Dashboard() {
     try { await api.delete(`/dashboards/${dashboard._id}`); const remaining = dashboards.filter((d) => d._id !== dashboard._id); setDashboards(remaining); if (activeDashboardId === dashboard._id) setActiveDashboardId(remaining[0]?._id || ""); setNotice("Dashboard arquivado."); }
     catch (e) { setError(e.response?.data?.message || "Não foi possível arquivar."); }
   };
-  const reorder = (target) => {
-    if (!draggedId || draggedId === target._id) return;
-    const ordered = [...tasks]; const from = ordered.findIndex((t) => t._id === draggedId); const to = ordered.findIndex((t) => t._id === target._id);
+  const reorder = async (target) => {
+    if (!draggedId || draggedId === target._id || !activeDashboardId) return;
+    const ordered = [...tasks];
+    const from = ordered.findIndex((task) => task._id === draggedId);
+    const to = ordered.findIndex((task) => task._id === target._id);
     if (from < 0 || to < 0) return;
-    const [item] = ordered.splice(from, 1); ordered.splice(to, 0, item); setTasks(ordered.map((t, i) => ({ ...t, position: i }))); setDraggedId("");
+    const [movedTask] = ordered.splice(from, 1);
+    ordered.splice(to, 0, movedTask);
+    const reorderedTasks = ordered.map((task, index) => ({ ...task, position: index }));
+    const previousTasks = tasks;
+    setTasks(reorderedTasks);
+    setDraggedId("");
+    try {
+      await api.patch("/tasks/reorder", {
+        dashboardId: activeDashboardId,
+        taskIds: reorderedTasks.map((task) => task._id),
+      });
+    } catch (e) {
+      setTasks(previousTasks);
+      setError(e.response?.data?.message || "Não foi possível salvar a ordem das tarefas.");
+    }
   };
   const filteredTasks = useMemo(() => tasks.filter((t) => (t.title || "").toLowerCase().includes(search.toLowerCase().trim())).filter((t) => statusFilter === "todos" || t.status === statusFilter).sort((a, b) => (a.position ?? 0) - (b.position ?? 0)), [tasks, search, statusFilter]);
   const total = tasks.length; const done = tasks.filter((t) => t.status === "concluída").length; const pending = total - done;
