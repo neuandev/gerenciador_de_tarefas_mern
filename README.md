@@ -59,6 +59,7 @@ O sistema possui:
 - Thunder Client
 - MongoDB Atlas
 - Docker
+- Docker Compose
 
 ---
 
@@ -69,23 +70,20 @@ gerenciador_de_tarefas_mern/
 │
 ├── backend/
 │   ├── src/
+│   │   ├── config/
+│   │   │   └── database.js
 │   │   ├── controllers/
 │   │   │   ├── taskController.js
 │   │   │   └── userController.js
-│   │   │
 │   │   ├── models/
 │   │   │   ├── Task.js
 │   │   │   └── User.js
-│   │   │
 │   │   ├── routes/
 │   │   │   ├── authRoutes.js
 │   │   │   └── taskRoutes.js
-│   │   │
 │   │   ├── middlewares/
 │   │   │   └── authMiddleware.js
-│   │   │
 │   │   └── server.js
-│   │
 │   ├── .env.example
 │   ├── .gitignore
 │   ├── Dockerfile
@@ -93,35 +91,111 @@ gerenciador_de_tarefas_mern/
 │   └── package-lock.json
 │
 ├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   └── ProtectedRoute.jsx
-│   │   │
-│   │   ├── pages/
-│   │   │   ├── Login.jsx
-│   │   │   ├── Login.css
-│   │   │   ├── Cadastro.jsx
-│   │   │   ├── Cadastro.css
-│   │   │   ├── Dashboard.jsx
-│   │   │   └── Dashboard.css
-│   │   │
-│   │   ├── services/
-│   │   │   └── api.js
-│   │   │
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
-│   │
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── package.json
-│   └── package-lock.json
+│   └── ...
 │
-├── .gitignore
 ├── docker-compose.yml
 └── README.md
 ```
 
+---
+
+## 🐳 Atividade prática: MongoDB com Docker
+
+O banco de dados MongoDB pode ser executado localmente em um contêiner Docker, utilizando a imagem oficial `mongo:6`. O Docker Compose publica a porta `27017` e utiliza o volume nomeado `dados` para preservar os registros mesmo após a remoção do contêiner.
+
+### Pré-requisitos
+
+- Docker Desktop instalado e com o mecanismo em execução;
+- Node.js e NPM instalados;
+- Visual Studio Code ou outro editor;
+- Arquivo de ambiente configurado.
+
+### 1. Configurar as variáveis de ambiente
+
+Na pasta `backend`, copie o arquivo de exemplo para criar seu arquivo local:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+No Windows PowerShell, se preferir:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+```
+
+Abra `backend/.env` e configure uma chave JWT própria com pelo menos 32 caracteres. Para executar a API diretamente no computador, mantenha a URI:
+
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/trabalho_final
+JWT_SECRET=sua_chave_secreta_com_mais_de_32_caracteres
+```
+
+Não envie o arquivo `.env` ao GitHub. Ele está listado no `.gitignore`.
+
+### 2. Iniciar o MongoDB com Docker Compose
+
+Na raiz do repositório, execute:
+
+```bash
+docker compose up -d mongo
+```
+
+Para iniciar os serviços do projeto (MongoDB, back-end e front-end) em conjunto, depois de configurar o arquivo `.env`, utilize:
+
+```bash
+docker compose up -d
+```
+
+Verifique os contêineres:
+
+```bash
+docker compose ps
+```
+
+O serviço MongoDB utiliza:
+
+- Imagem: `mongo:6`;
+- Porta do computador: `27017`;
+- Porta do contêiner: `27017`;
+- Volume persistente: `dados`;
+- Verificação de saúde para que o back-end aguarde o banco ficar pronto.
+
+Quando o back-end é executado dentro do Docker Compose, a URI é definida como `mongodb://mongo:27017/trabalho_final`, usando o nome do serviço na rede interna. Quando a API é executada diretamente no computador com `npm run dev`, use `mongodb://localhost:27017/trabalho_final` no arquivo `.env`.
+
+### 3. Conexão com Mongoose
+
+O projeto já utiliza Mongoose e dotenv como dependências. A conexão foi organizada em `backend/src/config/database.js`, e o servidor importa essa função antes de iniciar a API.
+
+Para executar a API diretamente no computador, abra um terminal na pasta `backend` e execute:
+
+```bash
+npm install
+npm run dev
+```
+
+Aguarde as mensagens de conexão com o MongoDB e de inicialização do servidor.
+
+### 4. Encerrar o ambiente
+
+Para parar os serviços e remover os contêineres e a rede:
+
+```bash
+docker compose down
+```
+
+O volume nomeado `dados` é preservado. Não utilize `docker compose down -v` se quiser manter os registros armazenados.
+
+Para iniciar novamente:
+
+```bash
+docker compose up -d
+```
+
+### Persistência dos dados
+
+Os dados do MongoDB ficam armazenados no volume Docker `dados`, montado em `/data/db` dentro do contêiner. Assim, reiniciar ou recriar o contêiner sem remover o volume não apaga os registros.
 
 ---
 
