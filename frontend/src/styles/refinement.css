@@ -440,3 +440,99 @@ body:has(.profile-page) {
   .top-search:focus-within input { opacity: 1; }
   .top-avatar { display: none; }
 }
+
+
+/* Estabiliza a largura da barra lateral e o botão de recolher */
+.notion-app {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+.notion-sidebar {
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  box-sizing: border-box;
+  width: 248px;
+  min-width: 248px;
+  max-width: 248px;
+  flex: 0 0 248px;
+  height: 100vh;
+  min-height: 100vh;
+  overflow: visible;
+  z-index: 30;
+}
+.notion-main {
+  min-width: 0;
+  width: calc(100% - 248px);
+  flex: 1 1 0;
+}
+.notion-app.sidebar-is-collapsed .notion-sidebar {
+  width: 68px;
+  min-width: 68px;
+  max-width: 68px;
+  flex: 0 0 68px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.notion-app.sidebar-is-collapsed .notion-main {
+  width: calc(100% - 68px);
+}
+.notion-app.sidebar-is-collapsed .sidebar-collapse {
+  left: auto;
+  right: -10px;
+  top: 17px;
+  width: 22px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 0 7px 7px 0;
+  box-shadow: 3px 2px 8px rgba(0,0,0,.18);
+}
+@media (max-width: 760px) {
+  .notion-sidebar {
+    position: relative;
+    top: auto;
+    width: 68px;
+    min-width: 68px;
+    max-width: 68px;
+    flex: 0 0 68px;
+    height: auto;
+    min-height: 100vh;
+  }
+  .notion-app.sidebar-is-collapsed .notion-sidebar {
+    width: 68px;
+    min-width: 68px;
+    max-width: 68px;
+    flex-basis: 68px;
+  }
+  .notion-app .notion-main,
+  .notion-app.sidebar-is-collapsed .notion-main {
+    width: calc(100% - 68px);
+    min-width: 0;
+  }
+}
+@media (max-width: 600px) {
+  .notion-app { display: block; }
+  .notion-sidebar {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: auto;
+    min-height: auto;
+    flex: none;
+  }
+  .notion-app.sidebar-is-collapsed .notion-sidebar {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    flex: none;
+  }
+  .notion-main,
+  .notion-app.sidebar-is-collapsed .notion-main {
+    width: 100%;
+  }
+}
