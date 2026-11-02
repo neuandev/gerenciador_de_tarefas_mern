@@ -2,8 +2,6 @@ services:
   mongo:
     image: mongo:6
     container_name: gerenciador-mongo
-    ports:
-      - "27017:27017"
     volumes:
       - dados:/data/db
     healthcheck:
