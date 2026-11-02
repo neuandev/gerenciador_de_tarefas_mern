@@ -536,3 +536,25 @@ body:has(.profile-page) {
     width: 100%;
   }
 }
+
+
+/* Posiciona a alça exatamente sobre a borda externa da sidebar recolhida */
+.notion-app.sidebar-is-collapsed .notion-brand {
+  position: relative;
+  width: 100%;
+}
+.notion-app.sidebar-is-collapsed .sidebar-collapse {
+  position: absolute;
+  left: auto;
+  right: -18px;
+  top: 17px;
+  z-index: 60;
+  transform: translateX(50%);
+}
+@media (max-width: 760px) {
+  .notion-app.sidebar-is-collapsed .sidebar-collapse {
+    right: -18px;
+    left: auto;
+    transform: translateX(50%);
+  }
+}
