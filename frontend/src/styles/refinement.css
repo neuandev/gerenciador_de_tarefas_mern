@@ -1,0 +1,250 @@
+/* TaskFlow — camada de refinamento visual
+   Sobrescreve estilos de apresentação sem alterar a lógica dos componentes. */
+
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --tf-radius-sm: 8px;
+  --tf-radius-md: 12px;
+  --tf-radius-lg: 16px;
+  --tf-shadow-soft: 0 12px 34px rgba(0, 0, 0, .16);
+  --tf-focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent, #6680ff) 22%, transparent);
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: -.01em;
+}
+
+button, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+button { transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent, #6680ff);
+  outline-offset: 2px;
+}
+
+/* Área autenticada: navegação e conteúdo */
+.notion-app {
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--text);
+}
+.notion-sidebar {
+  border-right-color: var(--border);
+  box-shadow: 8px 0 30px rgba(0,0,0,.035);
+}
+.notion-brand strong { letter-spacing: -.045em; }
+.brand-check { box-shadow: 0 5px 16px rgba(102,128,255,.2); }
+.side-link, .dashboard-nav-open, .theme-switch-row {
+  transition: color .18s ease, background .18s ease, transform .18s ease;
+}
+.side-link:hover, .dashboard-nav-open:hover, .theme-switch-row:hover {
+  background: var(--panel-raised);
+  color: var(--text);
+}
+.dashboard-nav-item.selected { color: var(--text); }
+.notion-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(16px);
+  background: color-mix(in srgb, var(--page-bg) 88%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+.crumbs { min-width: 0; }
+.crumbs strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-search {
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--panel-bg);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.top-search:focus-within { border-color: var(--accent); box-shadow: var(--tf-focus-ring); }
+.icon-tool, .top-logout, .page-menu-button, .view-tab, .view-picker {
+  border-radius: var(--tf-radius-sm);
+}
+.notion-content { padding-bottom: 52px; }
+.notion-cover {
+  border: 1px solid var(--border);
+  background-position: center;
+  background-size: cover;
+  box-shadow: var(--tf-shadow-soft);
+}
+.page-title-line h1 { letter-spacing: -.055em; }
+.page-title-line p { color: var(--muted); line-height: 1.65; }
+.primary-action {
+  min-height: 38px;
+  border: 1px solid color-mix(in srgb, var(--accent) 75%, white 0%);
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 650;
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.primary-action:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.07); box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 27%, transparent); }
+.page-toolbar { border-bottom: 1px solid var(--border); padding-bottom: 9px; }
+.view-tab.active { background: var(--accent-soft); color: var(--text); }
+.view-tab:hover, .page-menu-button:hover, .view-picker:hover { background: var(--panel-raised); color: var(--text); }
+
+/* Tabela */
+.table-card { border: 1px solid var(--border); border-radius: var(--tf-radius-md); overflow: hidden; }
+.notion-table th { color: var(--muted); font-weight: 650; letter-spacing: .015em; }
+.notion-table tbody tr { transition: background .16s ease; }
+.notion-table tbody tr:hover { background: color-mix(in srgb, var(--panel-raised) 72%, transparent); }
+.task-name-button { font-weight: 560; }
+.task-name-button:hover { color: var(--accent); }
+.table-checkbox { border-radius: 6px; }
+.status-pill { border-radius: 999px; font-weight: 600; }
+.row-actions button { border-radius: 7px; }
+.table-empty { padding-top: 44px; padding-bottom: 44px; }
+
+/* Quadro Kanban */
+.kanban-board { gap: 18px; }
+.kanban-column {
+  min-height: 300px;
+  padding: 15px;
+  border-radius: var(--tf-radius-lg);
+  background: color-mix(in srgb, var(--panel-raised) 78%, var(--page-bg));
+  transition: border-color .18s ease, background .18s ease;
+}
+.kanban-column:has(.kanban-task[draggable="true"]:active) { border-color: var(--accent); }
+.kanban-column > header { padding: 2px 1px 12px; border-bottom: 1px solid var(--border); }
+.kanban-column > header strong { font-size: 13px; letter-spacing: -.01em; }
+.kanban-column > header span {
+  min-width: 25px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: var(--panel-bg);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.kanban-task {
+  border-radius: 11px;
+  padding: 14px;
+  box-shadow: 0 2px 7px rgba(0,0,0,.06);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.kanban-task:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); box-shadow: var(--tf-shadow-soft); }
+.kanban-task[draggable="true"] { cursor: grab; }
+.kanban-task[draggable="true"]:active { cursor: grabbing; }
+.kanban-task-title { line-height: 1.5; }
+.kanban-task p { line-height: 1.65; }
+.kanban-add { border: 1px dashed var(--border); border-radius: 9px; }
+.kanban-add:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* Calendário e indicadores */
+.calendar-panel {
+  border-radius: var(--tf-radius-lg);
+  box-shadow: 0 4px 18px rgba(0,0,0,.045);
+}
+.calendar-item { transition: background .16s ease; }
+.calendar-item:hover { background: var(--panel-raised); }
+.calendar-item button { font-weight: 550; }
+.dashboard-metrics article {
+  border-radius: var(--tf-radius-md);
+  box-shadow: 0 3px 14px rgba(0,0,0,.035);
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.dashboard-metrics article:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); box-shadow: var(--tf-shadow-soft); }
+.dashboard-metrics article > strong { font-variant-numeric: tabular-nums; letter-spacing: -.055em; }
+.metrics-progress > div { height: 7px; }
+.notion-summary {
+  border: 1px solid var(--border);
+  border-radius: var(--tf-radius-md);
+  background: var(--panel-bg);
+}
+
+/* Modais, menus e mensagens */
+.modal-backdrop, .icon-picker-backdrop { backdrop-filter: blur(5px); }
+.task-modal, .icon-picker {
+  border-radius: var(--tf-radius-lg);
+  box-shadow: 0 24px 80px rgba(0,0,0,.32);
+}
+.task-modal input, .task-modal textarea, .task-modal select { border-radius: 9px; }
+.task-modal input:focus, .task-modal textarea:focus, .task-modal select:focus { border-color: var(--accent); box-shadow: var(--tf-focus-ring); }
+.inline-message { border-radius: 10px; }
+.notion-context-menu { border-radius: 11px; box-shadow: 0 16px 44px rgba(0,0,0,.24); overflow: hidden; }
+
+/* Perfil — alinhado ao mesmo sistema visual do dashboard */
+.profile-page {
+  --profile-bg: #111315;
+  --profile-panel: #191b1e;
+  --profile-border: #303338;
+  --profile-text: #e9e9e7;
+  --profile-muted: #a3a6ad;
+  --profile-accent: #6680ff;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(102,128,255,.09), transparent 42%),
+    var(--profile-bg);
+  color: var(--profile-text);
+}
+.profile-top { border-bottom-color: var(--profile-border); }
+.profile-top a { transition: color .18s ease; }
+.profile-top a:hover { color: var(--profile-text); }
+.profile-wrap { width: min(680px, calc(100% - 36px)); margin-top: clamp(34px, 6vh, 66px); }
+.profile-heading h1 { letter-spacing: -.055em; }
+.profile-heading p { line-height: 1.65; }
+.profile-form {
+  gap: 19px;
+  padding: clamp(20px, 4vw, 32px);
+  border-color: var(--profile-border);
+  border-radius: var(--tf-radius-lg);
+  background: color-mix(in srgb, var(--profile-panel) 94%, transparent);
+  box-shadow: var(--tf-shadow-soft);
+}
+.profile-form label { gap: 9px; }
+.profile-form input {
+  min-height: 45px;
+  border-color: #383d46;
+  border-radius: 9px;
+  background: #111315;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.profile-form input:focus { border-color: var(--profile-accent); box-shadow: 0 0 0 3px rgba(102,128,255,.15); }
+.profile-form > button { min-height: 44px; border-radius: 9px; transition: transform .18s ease, filter .18s ease; }
+.profile-form > button:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
+.profile-logout { border-radius: 9px; transition: background .18s ease, border-color .18s ease; }
+.profile-logout:hover { border-color: rgba(255,135,149,.45); background: rgba(255,135,149,.07); }
+
+/* Telas de entrada e cadastro */
+.auth-showcase { background-color: #15181d; }
+.auth-brand-mark { border-radius: 11px; }
+.auth-heading h1 { letter-spacing: -.055em; }
+.auth-field input { border-radius: 9px; }
+.auth-submit { border-radius: 9px; }
+.auth-submit:focus-visible { outline-offset: 3px; }
+
+/* Responsividade e movimento */
+@media (max-width: 900px) {
+  .notion-content { padding-left: 22px; padding-right: 22px; }
+  .kanban-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .notion-app { min-height: 100vh; }
+  .notion-sidebar { box-shadow: none; }
+  .notion-topbar { position: relative; gap: 10px; }
+  .crumbs { max-width: 55%; font-size: 11px; }
+  .topbar-tools { min-width: 0; }
+  .top-search { min-width: 0; max-width: 150px; }
+  .notion-content { padding: 22px 14px 36px; }
+  .page-title-line { gap: 15px; }
+  .page-title-line h1 { font-size: clamp(25px, 7vw, 31px); }
+  .page-title-line .primary-action { align-self: stretch; justify-content: center; }
+  .kanban-board { grid-template-columns: minmax(0, 1fr); }
+  .kanban-column { min-height: 180px; }
+  .calendar-panel { padding: 14px; }
+  .calendar-item { gap: 8px; padding: 12px 2px; }
+  .dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile-top { height: 60px; }
+  .profile-wrap { margin-top: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
