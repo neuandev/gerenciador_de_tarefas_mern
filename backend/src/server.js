@@ -1,4 +1,4 @@
-﻿const dotenv = require("dotenv");
+const dotenv = require("dotenv");
 dotenv.config();
 
 const express = require("express");
@@ -20,10 +20,18 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 
 const app = express();
 
-// Configuracao do CORS
+const allowedOrigins = (process.env.CORS_ORIGINS || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+// Permite chamadas sem Origin (curl, health checks e comunicacao servidor-servidor)
+// e somente origens explicitamente autorizadas no navegador.
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      callback(null, !origin || allowedOrigins.includes(origin));
+    },
   }),
 );
 
@@ -45,6 +53,11 @@ app.get("/api", (req, res) => {
   res.json({
     message: "API do Gerenciador de Tarefas funcionando!",
   });
+});
+
+// Rota inexistente da API
+app.use("/api", (req, res) => {
+  res.status(404).json({ message: "Rota da API nao encontrada." });
 });
 
 // Tratamento de erros

@@ -31,11 +31,14 @@ const createDashboard = async (req, res) => {
     if (typeof name !== "string" || !name.trim()) {
       return res.status(400).json({ message: "O nome do dashboard é obrigatório." });
     }
+    if (name.trim().length > 80) {
+      return res.status(400).json({ message: "O nome do dashboard deve ter no máximo 80 caracteres." });
+    }
     if (coverUrl !== undefined && (typeof coverUrl !== "string" || coverUrl.length > 2000)) {
       return res.status(400).json({ message: "A capa deve ser um texto de até 2000 caracteres." });
     }
-    if (icon !== undefined && (typeof icon !== "string" || icon.length > 1500000)) {
-      return res.status(400).json({ message: "O ícone deve ser um texto de até 1,5 MB." });
+    if (icon !== undefined && (typeof icon !== "string" || icon.length > 1400000)) {
+      return res.status(400).json({ message: "O ícone deve ser um texto de até 1 MB." });
     }
     const count = await Dashboard.countDocuments({ owner: req.userId, isArchived: false });
     const dashboard = await Dashboard.create({
@@ -66,6 +69,9 @@ const updateDashboard = async (req, res) => {
       if (typeof name !== "string" || !name.trim()) {
         return res.status(400).json({ message: "O nome do dashboard não pode ficar vazio." });
       }
+      if (name.trim().length > 80) {
+        return res.status(400).json({ message: "O nome do dashboard deve ter no máximo 80 caracteres." });
+      }
       dashboard.name = name.trim();
     }
     if (coverUrl !== undefined) {
@@ -75,8 +81,8 @@ const updateDashboard = async (req, res) => {
       dashboard.coverUrl = coverUrl;
     }
     if (icon !== undefined) {
-      if (typeof icon !== "string" || icon.length > 1500000) {
-        return res.status(400).json({ message: "O ícone deve ser um texto de até 1,5 MB." });
+      if (typeof icon !== "string" || icon.length > 1400000) {
+        return res.status(400).json({ message: "O ícone deve ser um texto de até 1 MB." });
       }
       dashboard.icon = icon;
     }
