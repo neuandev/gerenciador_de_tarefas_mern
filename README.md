@@ -139,7 +139,7 @@ JWT_SECRET=sua_chave_secreta_com_mais_de_32_caracteres
 
 Não envie o arquivo `.env` ao GitHub. Ele está listado no `.gitignore`.
 
-### 1.1 Alternar entre MongoDB local (Docker) e MongoDB Atlas
+### 1.1 Alternar entre MongoDB local e MongoDB Atlas
 
 O projeto mantém suporte aos dois ambientes sem remover a configuração do Atlas:
 
