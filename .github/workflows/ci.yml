@@ -59,6 +59,9 @@ jobs:
           curl --fail --retry 10 --retry-delay 3 http://localhost:3000/api
           curl --fail --retry 10 --retry-delay 3 http://localhost:5173/
 
+      - name: Executar testes automatizados de integração da API
+        run: docker compose exec -T backend npm test
+
       - name: Exibir logs em caso de falha
         if: failure()
         run: docker compose logs
