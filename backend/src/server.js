@@ -1,15 +1,17 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const authRoutes = require("./routes/authRoutes");
-const taskRoutes = require("./routes/taskRoutes");
-const connectDatabase = require("./config/database");
-
+﻿const dotenv = require("dotenv");
 dotenv.config();
 
-// Validação das variáveis de ambiente
+const express = require("express");
+const cors = require("cors");
+
+const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const connectDatabase = require("./config/database");
+
+// Validacao das variaveis de ambiente
 if (!process.env.MONGODB_URI) {
-  throw new Error("MONGODB_URI não configurada.");
+  throw new Error("MONGODB_URI nao configurada.");
 }
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
@@ -18,19 +20,19 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 
 const app = express();
 
-// Configuração do CORS
+// Configuracao do CORS
 app.use(
   cors({
     origin: "http://localhost:5173",
   }),
 );
 
-// Permite receber JSON nas requisições
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 
-// Rotas
+// Rotas da API
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/dashboards", dashboardRoutes);
 
 // Rota principal
 app.get("/", (req, res) => {
@@ -39,7 +41,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Rota da API
 app.get("/api", (req, res) => {
   res.json({
     message: "API do Gerenciador de Tarefas funcionando!",
@@ -50,7 +51,7 @@ app.get("/api", (req, res) => {
 app.use((error, req, res, next) => {
   if (error instanceof SyntaxError && error.status === 400 && "body" in error) {
     return res.status(400).json({
-      message: "JSON inválido.",
+      message: "JSON invalido.",
     });
   }
 
@@ -63,7 +64,7 @@ app.use((error, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-// Inicializa a API somente depois de conectar ao MongoDB
+// Inicia a API somente depois de conectar ao MongoDB
 const startServer = async () => {
   try {
     await connectDatabase();

@@ -18,6 +18,8 @@ O sistema possui:
 - Listagem de tarefas do usuário autenticado;
 - Edição de tarefas;
 - Exclusão de tarefas;
+- Organização das tarefas em dashboards;
+- Reordenação persistente das tarefas por arrastar e soltar;
 - Alteração do status da tarefa;
 - Proteção das rotas com JWT;
 - Senhas armazenadas utilizando hash com bcrypt;
@@ -73,13 +75,16 @@ gerenciador_de_tarefas_mern/
 │   │   ├── config/
 │   │   │   └── database.js
 │   │   ├── controllers/
+│   │   │   ├── dashboardController.js
 │   │   │   ├── taskController.js
 │   │   │   └── userController.js
 │   │   ├── models/
+│   │   │   ├── Dashboard.js
 │   │   │   ├── Task.js
 │   │   │   └── User.js
 │   │   ├── routes/
 │   │   │   ├── authRoutes.js
+│   │   │   ├── dashboardRoutes.js
 │   │   │   └── taskRoutes.js
 │   │   ├── middlewares/
 │   │   │   └── authMiddleware.js
