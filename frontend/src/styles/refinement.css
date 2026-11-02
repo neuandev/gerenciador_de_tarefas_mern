@@ -558,3 +558,20 @@ body:has(.profile-page) {
     transform: translateX(50%);
   }
 }
+
+
+/* A alça da sidebar deve ficar acima da barra superior */
+.notion-app.sidebar-is-collapsed .notion-sidebar {
+  position: sticky;
+  z-index: 80;
+}
+.notion-app.sidebar-is-collapsed .notion-brand {
+  z-index: 81;
+}
+.notion-app.sidebar-is-collapsed .sidebar-collapse {
+  z-index: 82;
+}
+.notion-app .notion-main,
+.notion-app .notion-topbar {
+  z-index: 40;
+}
