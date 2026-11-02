@@ -37,6 +37,7 @@ const createTask = async (req, res) => {
     if (
       status !== undefined &&
       status !== "pendente" &&
+      status !== "em andamento" &&
       status !== "concluída"
     ) {
       return res.status(400).json({
@@ -136,7 +137,11 @@ const updateTask = async (req, res) => {
       });
     }
 
-    if (status !== "pendente" && status !== "concluída") {
+    if (
+      status !== "pendente" &&
+      status !== "em andamento" &&
+      status !== "concluída"
+    ) {
       return res.status(400).json({
         message: "Status inválido.",
       });
