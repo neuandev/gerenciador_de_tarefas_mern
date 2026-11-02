@@ -28,7 +28,7 @@ const updateProfile = async (req, res) => {
     }
 
     if (email !== undefined) {
-      if (typeof email !== "string" || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email.trim()))
+      if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
         return res.status(400).json({ message: "Informe um e-mail válido." });
       const normalizedEmail = email.trim().toLowerCase();
       const existing = await User.findOne({ email: normalizedEmail, _id: { $ne: user._id } });
@@ -63,7 +63,7 @@ const register = async (req, res) => {
     const emailTrimmed = email.trim().toLowerCase();
     if (nameTrimmed.length < 2) return res.status(400).json({ message: "O nome deve ter pelo menos 2 caracteres." });
     if (password.length < 6) return res.status(400).json({ message: "A senha deve ter pelo menos 6 caracteres." });
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(emailTrimmed)) return res.status(400).json({ message: "Informe um e-mail válido." });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) return res.status(400).json({ message: "Informe um e-mail válido." });
     if (await User.findOne({ email: emailTrimmed })) return res.status(400).json({ message: "Este email já está cadastrado." });
     const user = await User.create({ name: nameTrimmed, email: emailTrimmed, password: await bcrypt.hash(password, 10) });
     return res.status(201).json({ message: "Usuário cadastrado com sucesso.", user: publicUser(user) });
