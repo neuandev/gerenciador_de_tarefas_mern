@@ -106,7 +106,7 @@ gerenciador_de_tarefas_mern/
 
 ## 🐳 Atividade prática: MongoDB com Docker
 
-O banco de dados MongoDB pode ser executado localmente em um contêiner Docker, utilizando a imagem oficial `mongo:6`. O Docker Compose publica a porta `27017` e utiliza o volume nomeado `dados` para preservar os registros mesmo após a remoção do contêiner.
+O banco de dados MongoDB pode ser executado em um contêiner Docker, utilizando a imagem oficial `mongo:6`. O Docker Compose mantém o MongoDB acessível apenas pela rede interna do Compose e utiliza o volume nomeado `dados` para preservar os registros mesmo após a recriação do contêiner.
 
 ### Pré-requisitos
 
@@ -143,7 +143,7 @@ Não envie o arquivo `.env` ao GitHub. Ele está listado no `.gitignore`.
 
 O projeto mantém suporte aos dois ambientes sem remover a configuração do Atlas:
 
-- **API executada diretamente no computador com MongoDB Docker:** use `MONGODB_URI=mongodb://localhost:27017/trabalho_final` no arquivo `backend/.env` e inicie o serviço MongoDB com `docker compose up -d mongo`.
+- **API executada diretamente no computador:** use uma instância MongoDB instalada localmente ou uma URI do MongoDB Atlas no `backend/.env`. O MongoDB iniciado pelo Compose não publica a porta `27017` no computador; portanto, não fica acessível por `localhost:27017`.
 - **API executada diretamente no computador com MongoDB Atlas:** substitua o valor de `MONGODB_URI` pela string de conexão fornecida pelo MongoDB Atlas. Mantenha usuário e senha apenas no arquivo local `.env`, nunca no GitHub.
 - **API executada pelo Docker Compose:** o serviço `backend` recebe automaticamente `MONGODB_URI=mongodb://mongo:27017/trabalho_final`, pois dentro da rede Docker o banco é acessado pelo nome do serviço `mongo`.
 
@@ -172,12 +172,11 @@ docker compose ps
 O serviço MongoDB utiliza:
 
 - Imagem: `mongo:6`;
-- Porta do computador: `27017`;
-- Porta do contêiner: `27017`;
+- Porta interna do contêiner: `27017` (não publicada no computador);
 - Volume persistente: `dados`;
 - Verificação de saúde para que o back-end aguarde o banco ficar pronto.
 
-Quando o back-end é executado dentro do Docker Compose, a URI é definida como `mongodb://mongo:27017/trabalho_final`, usando o nome do serviço na rede interna. Quando a API é executada diretamente no computador com `npm run dev`, use `mongodb://localhost:27017/trabalho_final` no arquivo `.env`.
+Quando o back-end é executado dentro do Docker Compose, a URI é definida como `mongodb://mongo:27017/trabalho_final`, usando o nome do serviço na rede interna. Quando a API é executada diretamente no computador com `npm run dev`, configure no `.env` uma instância MongoDB local que esteja instalada e em execução ou uma URI do MongoDB Atlas.
 
 ### 3. Conexão com Mongoose
 
