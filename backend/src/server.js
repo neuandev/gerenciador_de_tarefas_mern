@@ -45,7 +45,8 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "100kb" }));
+// O limite de 2 MB permite ícones enviados como Data URL (até 1 MB no frontend).
+app.use(express.json({ limit: "2mb" }));
 
 // Rotas da API
 app.use("/api/auth", authRoutes);
@@ -86,7 +87,7 @@ app.use((error, req, res, next) => {
   }
 
   if (error.type === "entity.too.large") {
-    return res.status(413).json({ message: "O corpo da requisicao excede o limite de 100 KB." });
+    return res.status(413).json({ message: "O corpo da requisicao excede o limite de 2 MB." });
   }
 
   console.error("Erro interno:", error);
