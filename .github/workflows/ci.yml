@@ -32,6 +32,10 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Analisar código do frontend (Oxlint)
+        working-directory: frontend
+        run: npm run lint
+
       - name: Gerar build do frontend
         working-directory: frontend
         run: npm run build
