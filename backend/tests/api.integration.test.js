@@ -171,6 +171,16 @@ test("API: autenticação, perfil, dashboards e CRUD de tarefas", { timeout: 60_
       assert.equal((await request(`/dashboards/${dashboardId}`, { method: "DELETE", token })).status, 200);
       assert.equal((await request(`/dashboards/${defaultDashboardId}`, { method: "DELETE", token })).status, 400);
     });
+    await t.test("limita tentativas repetidas de login", async () => {
+      const attempts = await Promise.all(Array.from({ length: 12 }, () =>
+        request("/auth/login", {
+          method: "POST",
+          body: { email: firstUser.email, password: "senha-incorreta" },
+        }),
+      ));
+      assert.ok(attempts.some((result) => result.status === 429), "deve bloquear tentativas excessivas");
+    });
+
   } finally {
     // Remove somente os registros criados por esta execução de teste.
     const client = new MongoClient(MONGODB_URI);
