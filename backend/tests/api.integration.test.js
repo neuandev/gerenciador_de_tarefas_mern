@@ -31,6 +31,18 @@ test("API: autenticação, perfil, dashboards e CRUD de tarefas", { timeout: 60_
   let token;
 
   try {
+    await t.test("verifica saúde da API e cabeçalhos defensivos", async () => {
+      const response = await fetch(`${API_URL}/health`);
+      const data = await response.json();
+      assert.equal(response.status, 200);
+      assert.equal(data.status, "ok");
+      assert.equal(data.database, "connected");
+      assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+      assert.equal(response.headers.get("x-frame-options"), "DENY");
+      assert.equal(response.headers.get("referrer-policy"), "no-referrer");
+      assert.equal(response.headers.get("x-powered-by"), null);
+    });
+
     await t.test("bloqueia rotas protegidas sem token", async () => {
       assert.equal((await request("/auth/me")).status, 401);
     });
@@ -94,6 +106,13 @@ test("API: autenticação, perfil, dashboards e CRUD de tarefas", { timeout: 60_
       assert.equal(updated.status, 200);
       assert.equal(updated.data.dashboard.name, "Dashboard de Teste Atualizado");
       assert.equal(updated.data.dashboard.isFavorite, true);
+
+      const imageDataUrl = `data:image/png;base64,${"A".repeat(120_000)}`;
+      const iconUpdated = await request(`/dashboards/${dashboardId}`, {
+        method: "PATCH", token, body: { icon: imageDataUrl },
+      });
+      assert.equal(iconUpdated.status, 200);
+      assert.equal(iconUpdated.data.dashboard.icon, imageDataUrl);
 
       const duplicated = await request(`/dashboards/${dashboardId}/duplicate`, { method: "POST", token });
       assert.equal(duplicated.status, 201);
@@ -171,6 +190,14 @@ test("API: autenticação, perfil, dashboards e CRUD de tarefas", { timeout: 60_
       assert.equal((await request(`/dashboards/${dashboardId}`, { method: "DELETE", token })).status, 200);
       assert.equal((await request(`/dashboards/${defaultDashboardId}`, { method: "DELETE", token })).status, 400);
     });
+    await t.test("rejeita payloads maiores que 2 MB", async () => {
+      const oversized = await request("/auth/login", {
+        method: "POST",
+        body: { email: firstUser.email, password: "x".repeat(2 * 1024 * 1024) },
+      });
+      assert.equal(oversized.status, 413);
+    });
+
     await t.test("limita tentativas repetidas de login", async () => {
       const attempts = await Promise.all(Array.from({ length: 12 }, () =>
         request("/auth/login", {
